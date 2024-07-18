@@ -30,6 +30,15 @@ from moonshot.src.storage.storage import Storage
 from pydantic import BaseModel
 
 
+# Bill's imports (pip install langchain_openai langchain langchain_community chromadb)
+from langchain_openai import OpenAIEmbeddings
+from langchain.prompts import ChatPromptTemplate
+from langchain_community.vectorstores import Chroma
+
+from moonshot.src.retrievers.retriever import Retriever
+from moonshot.src.retrievers.simple_retriever import SimpleRetriever
+from moonshot.src.utils.import_modules import get_instance
+
 class Benchmarking:
     sql_create_runner_cache_record = """
         INSERT INTO runner_cache_table(connection_id,recipe_id,dataset_id,prompt_template_id,attack_module_id,
@@ -80,6 +89,7 @@ class Benchmarking:
             # Store parsed values
             self.event_loop = event_loop
             self.runner_args = runner_args
+            print(f"This is the runner_args: {runner_args}")
             self.database_instance = database_instance
             self.endpoints = endpoints
             self.run_progress = run_progress
@@ -567,6 +577,20 @@ class Benchmarking:
                         )
                         queue.task_done()
                         break
+                    # Should be initialised earlier up. This is to simulate
+                    self.retriever_method = "simple_retriever"
+                    # embedding connector
+
+                    ## attaching the context to each of the prompts
+                    batch_with_context_tasks = [
+                        self._attach_context(prompt, self.retriever_method)
+                        for prompt in batch
+                    ]
+                    print("Checkpoint 0")
+                    batch = await asyncio.gather(*batch_with_context_tasks, return_exceptions=True)
+                    print("Checkpoint 1")
+                    print(f"batch results: {batch[0].connector_prompt.prompt}")
+                    print("*" * 200)
 
                     # Dispatch the batch to all connectors
                     batch_tasks = [
@@ -616,6 +640,23 @@ class Benchmarking:
                 f"[Benchmarking] Error during generator pipeline execution: {str(e)}"
             )
             return []  # Return an empty list in case of error
+        
+    async def _attach_context(self, prompt: PromptArguments, retriever: str):
+
+        file_path = f'moonshot/src/retrievers/{retriever}.py'
+
+        RetrieverClass = get_instance(retriever, file_path)
+
+        if RetrieverClass:
+            # Create an instance of the Retriever class
+            retriever_instance = RetrieverClass()
+            print(f"{retriever} instance created:", retriever_instance)
+        else:
+            print("Failed to load {retriever} class")
+
+        prompt_with_context = retriever_instance.retrieve_context(prompt)
+
+        return prompt_with_context
 
     async def _generate_prompts_with_attack_module(self, prompt: str) -> list[str]:
         """
