@@ -65,6 +65,51 @@ class CharSwapGenerator(AttackModule):
         self.load_modules()
         return await self.perform_attack_manually()
 
+    async def perform_data_augmentation(self):
+        """
+        Asynchronously performs data augmentation by swapping characters in words of the dataset prompts.
+
+        This method generates new prompts by randomly swapping characters in words that are longer than 3 characters.
+        The number of words to be perturbed in each prompt is determined by the word_swap_ratio parameter.
+        The process is repeated for a specified number of iterations (MAX_ITERATION).
+
+        Returns:
+            list: A list of augmented prompts with character swaps.
+        """
+        # Configurble PARAMS - Number of prompts to be sent to target
+        MAX_ITERATION = 10
+        # Configurble PARAMS - Percentage of words in a prompt that should be changed
+        word_swap_ratio = 0.2
+
+        augmented_prompts = []
+        for dataset_prompt in self.dataset_prompts:
+            word_list = word_tokenize(dataset_prompt)
+            word_list_len = len(word_list)
+            num_perturb_words = math.ceil(word_list_len * word_swap_ratio)
+            for attempt in range(MAX_ITERATION):
+                # get random indices of words to undergo swapping algo
+                random_words_idx = self.get_n_random(
+                    0, word_list_len, num_perturb_words
+                )
+                for idx in random_words_idx:
+                    if (
+                        word_list[idx] not in string.punctuation
+                        and len(word_list[idx]) > 3
+                    ):
+                        idx1 = random.randint(1, len(word_list[idx]) - 2)
+                        idx_elements = list(word_list[idx])
+                        # swap characters
+                        idx_elements[idx1], idx_elements[idx1 + 1] = (
+                            idx_elements[idx1 + 1],
+                            idx_elements[idx1],
+                        )
+                        word_list[idx] = "".join(idx_elements)
+                new_prompt = TreebankWordDetokenizer().detokenize(word_list)
+                augmented_prompts.append(new_prompt)
+                word_list = word_tokenize(dataset_prompt)
+
+        return augmented_prompts
+
     async def perform_attack_manually(self) -> list:
         """
         Asynchronously performs the attack manually. The user will need to pass in a list of prompts and
