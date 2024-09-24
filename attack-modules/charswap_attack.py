@@ -77,7 +77,7 @@ class CharSwapGenerator(AttackModule):
         result_list = []
 
         # Configurble PARAMS - Number of prompts to be sent to target
-        MAX_ITERATION = 10
+        MAX_ITERATION = 5
         # Configurble PARAMS - Percentage of words in a prompt that should be changed
         word_swap_ratio = 0.2
 

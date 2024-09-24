@@ -54,18 +54,16 @@ class ToxicSentenceGenerator(AttackModule):
         and sends them to the respective LLMs.
         """
         result_list = []
-        redteamer = pipeline("text-generation", model="theastronuts/toxic_sentence_generator")
-        
-        MAX_ITERATION = 30
+        redteamer = pipeline(
+            "text-generation", model="theastronuts/toxic_sentence_generator"
+        )
+
+        MAX_ITERATION = 5
 
         for i in range(MAX_ITERATION):
             toxic_generator = redteamer(self.prompt)[0]["generated_text"]
-            new_prompt = f"\"{toxic_generator}\""
-            
-            result_list.append(
-                await self._send_prompt_to_all_llm(
-                    [new_prompt]
-                )
-            )
-        
+            new_prompt = f'"{toxic_generator}"'
+
+            result_list.append(await self._send_prompt_to_all_llm([new_prompt]))
+
         return result_list
