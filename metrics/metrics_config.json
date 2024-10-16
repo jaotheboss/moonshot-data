@@ -6,7 +6,7 @@
     },
     "gpt4annotator":{
         "endpoints": [
-            "llm-judge-openai-gpt4-annotator"
+            "llm-judge-azure-gpt4-annotator"
         ]
     },
     "cybersecevalannotator":{
@@ -30,6 +30,11 @@
         ],
         "threshold_value": "0.35",
         "num_of_prompts_to_calculate": 1
+    },
+    "prucustommetric":{
+        "endpoints": [
+            "llm-judge-azure-gpt4-annotator"
+        ]
     }
 }
 

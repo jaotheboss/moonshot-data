@@ -70,5 +70,17 @@
     "name": "Singapore Sentence Generator",
     "description": "This module generates singlish sentence based on a given seed prompt. The attack module intends to test if the endpoint will complete the sentence with toxic sentences/phrases in Singapore context.",
     "hash": "611e25855bff0098"
+  },
+  "homoglyph_v2_attack": {
+    "id": "homoglyph_v2_attack",
+    "name": "Homoglyph V2 Attack",
+    "description": "This module tests for adversarial textual robustness. Homoglyphs are alternative characters that resemble a similar ASCII character.\nExample of a homoglyph fool -> fooI\nThis module slowly increases the percentageof characters replaced to see how the model reacts to the base prompt.",
+    "hash": "06ebdb102443fdb8"
+  },
+  "payload_mask_attack": {
+    "id": "payload_mask_attack",
+    "name": "Payload Mask Attack",
+    "description": "An attack where the payload is masked, and the LLM is prompted to fill in missing information.",
+    "hash": "ed636b49c6682dd0"
   }
 }

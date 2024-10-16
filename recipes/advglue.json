@@ -13,7 +13,7 @@
     ],
     "prompt_templates": [],
     "metrics": [
-        "advglue"
+        "prucustommetric"
     ],
     "grading_scale": {
         "A": [

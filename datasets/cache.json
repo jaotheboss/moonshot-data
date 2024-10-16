@@ -291,10 +291,10 @@
     "description": "PubMedQA is a large-scale, multiple-choice question answering dataset designed to address realworld medical entrance exam questions. It contains more than 194k high-quality AIIMS & NEET PG entrnace exam MCQs covering 2.4k healthcare topics and 21 medical subjects.",
     "examples": null,
     "num_of_dataset_prompts": 1000,
-    "created_date": "2024-05-27 16:48:35",
+    "created_date": "2024-10-04 16:44:00",
     "reference": "https://github.com/MedMCQA/MedMCQA",
     "license": "MIT License",
-    "hash": "1f6c0e8047dfaa2e"
+    "hash": "11ef2f2817132c95"
   },
   "singapore-facts-tnf": {
     "id": "singapore-facts-tnf",
@@ -1061,10 +1061,10 @@
     "description": "MMLU measure knowledge acquired during pretraining by evaluating models exclusively in zero-shot and few-shot settings. This particular dataset contains questions on MMLU Medical Genetics",
     "examples": null,
     "num_of_dataset_prompts": 100,
-    "created_date": "2024-05-27 16:48:35",
+    "created_date": "2024-10-04 16:44:25",
     "reference": "https://github.com/hendrycks/test",
     "license": "MIT License",
-    "hash": "fda8c8823e758ec7"
+    "hash": "1bdd3c199638358f"
   },
   "cbbq-lite-gender-ambiguous": {
     "id": "cbbq-lite-gender-ambiguous",
@@ -1138,10 +1138,10 @@
     "description": "MMLU measure knowledge acquired during pretraining by evaluating models exclusively in zero-shot and few-shot settings. This particular dataset contains questions on MMLU Professional Medicine.json",
     "examples": null,
     "num_of_dataset_prompts": 272,
-    "created_date": "2024-05-27 16:48:35",
+    "created_date": "2024-10-04 16:44:20",
     "reference": "https://github.com/hendrycks/test",
     "license": "MIT License",
-    "hash": "94f3e264a8908a67"
+    "hash": "713b6d53fc583e5b"
   },
   "cbbq-lite-disease-disamb": {
     "id": "cbbq-lite-disease-disamb",
@@ -1384,5 +1384,27 @@
     "reference": "https://arxiv.org/abs/2211.03759",
     "license": "MIT License",
     "hash": "8b0a309e8101a90a"
+  },
+  "cyberseceval_promptinjection": {
+    "id": "cyberseceval_promptinjection",
+    "name": "CyberSecEval Prompt Injection",
+    "description": "Check if llm is susceptible to prompt injection",
+    "examples": null,
+    "num_of_dataset_prompts": 251,
+    "created_date": "2024-10-03 09:38:06",
+    "reference": "https://github.com/meta-llama/PurpleLlama/tree/main/CybersecurityBenchmarks/datasets/prompt_injection",
+    "license": "MIT license",
+    "hash": "64c43fa0d20dbc53"
+  },
+  "facticity-apac-multilungual-facts": {
+    "id": "facticity-apac-multilungual-facts",
+    "name": "Facts about Asia pacific in True and False in 4 languages (Chinese, Malay, Tamil and English)",
+    "description": "Contain prompts that contain facts about Asia Pacific and Singapore, in True/False format",
+    "examples": null,
+    "num_of_dataset_prompts": 22,
+    "created_date": "2024-10-03 09:38:06",
+    "reference": "facticity.ai",
+    "license": "Apache-2.0",
+    "hash": "5a5c4d22e8266c20"
   }
 }

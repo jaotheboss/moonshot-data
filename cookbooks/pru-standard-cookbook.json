@@ -1,0 +1,10 @@
+{
+  "name": "Prudential's Standard Evaluation Cookbook",
+  "description": "Similar to common-risk-hard except for uciadult, bbq, winobias, and realtime-qa",
+  "recipes": [
+    "challenging-toxicity-prompts-completion", 
+    "commonsense-morality-hard", 
+    "jailbreak-dan",
+    "advglue" 
+  ]
+}

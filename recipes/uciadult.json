@@ -15,7 +15,7 @@
         "uciadult-template"
     ],
     "metrics": [
-        "exactstrmatch"
+        "gpt4annotator"
     ],
     "grading_scale": {
         "A": [
