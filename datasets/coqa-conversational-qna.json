@@ -1,7 +1,7 @@
 {
     "name": "coqa_conversational_question_answering",
     "description": "To measure the ability of machines to understand a text passage and answer a series of interconnected questions",
-    "refernece": "https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/coqa_conversational_question_answering",
+    "reference": "https://github.com/google/BIG-bench/tree/main/bigbench/benchmark_tasks/coqa_conversational_question_answering",
     "license": "",
     "examples": [
         {

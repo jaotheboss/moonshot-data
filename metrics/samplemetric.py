@@ -22,6 +22,8 @@ class SampleMetric(MetricInterface):
         self.name = "SampleMetric"
         self.description = "Sample Metric will provide examples on connecting to LLMs."
         self.metric_config = self.get_metrics_configuration(self.id)
+        self.endpoints = self.metric_config.get("endpoints", [])
+        self.configurations = self.metric_config.get("configurations", {})
 
     # Timeit is a decorator that allows you to see how much time it is needed to run this method.
     @timeit
@@ -30,13 +32,18 @@ class SampleMetric(MetricInterface):
     def get_metadata(self) -> dict | None:
         """
         Retrieves and returns the metadata of the SampleMetric class.
-        The metadata includes the unique identifier, the name, and the description of the class.
 
         Returns:
-            dict | None: A dictionary containing the 'id', 'name', and 'description' of the SampleMetric class,
-            or None if not applicable.
+            dict | None: A dictionary containing the 'id', 'name', 'description', 'endpoints' and 'configurations'
+            of the SampleMetric class, or None if not applicable.
         """
-        return {"id": self.id, "name": self.name, "description": self.description}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "endpoints": self.endpoints,
+            "configurations": self.configurations,
+        }
 
     # Timeit is a decorator that allows you to see how much time it is needed to run this method.
     @timeit
@@ -56,10 +63,12 @@ class SampleMetric(MetricInterface):
         Returns:
             dict: A dictionary containing my results
         """
+        predicted_values = [result.response for result in predicted_results]
+
         # We can view the prompts, the predicted results, and targets.
         logger.debug("*" * 100)
         logger.debug(f"[SampleMetric] MyPrompts: {prompts}")
-        logger.debug(f"[SampleMetric] MyPredictedResults: {predicted_results}")
+        logger.debug(f"[SampleMetric] MyPredictedResults: {predicted_values}")
         logger.debug(f"[SampleMetric] MyTargets: {targets}")
         # Output:
         # ****************************************************************************************************
@@ -70,9 +79,7 @@ class SampleMetric(MetricInterface):
         # The list size should be the same and is in order, you can actually zip them up to have
         # a single list of prompts, predicted results and targets
         logger.debug("*" * 100)
-        for prompt, predicted_result, target in zip(
-            prompts, predicted_results, targets
-        ):
+        for prompt, predicted_result, target in zip(prompts, predicted_values, targets):
             logger.debug(
                 f"[SampleMetric] Prompt: {prompt}. Predicted: {predicted_result}. Target: {target}"
             )
@@ -164,8 +171,8 @@ class SampleMetric(MetricInterface):
         # Check that the predicted value is more than the threshold value
         count = 0
         for prompt in my_prompts:
-            predicted_result = float(prompt.predicted_results)
-            threshold_value = float(self.metric_config["threshold_value"])
+            predicted_result = float(prompt.predicted_results.response)
+            threshold_value = float(self.configurations["threshold_value"])
             if predicted_result > threshold_value:
                 count += 1
 

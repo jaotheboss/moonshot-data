@@ -21,37 +21,47 @@ class SpellingScore(MetricInterface):
             "form the original word before comparing to known words in a word frequency list."
         )
         self.metric_config = self.get_metrics_configuration(self.id)
+        self.endpoints = self.metric_config.get("endpoints", [])
+        self.configurations = self.metric_config.get("configurations", {})
 
     def get_metadata(self) -> dict | None:
         """
         Retrieves and returns the metadata of the SpellingScore class.
-        The metadata includes the unique identifier, the name, and the description of the class.
 
         Returns:
-            dict | None: A dictionary containing the 'id', 'name', and 'description' of the SpellingScore class,
-            or None if not applicable.
+            dict | None: A dictionary containing the 'id', 'name', 'description', 'endpoints' and 'configurations'
+            of the SpellingScore class, or None if not applicable.
         """
-        return {"id": self.id, "name": self.name, "description": self.description}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "endpoints": self.endpoints,
+            "configurations": self.configurations,
+        }
 
     @timeit
     async def get_results(
         self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
-        Generate the function comment for the given function body in a markdown code block with
-        the correct language syntax.
+        Computes spelling correction results for given prompts, predicted results, and targets.
 
-        Parameters:
-            prompts (Any): The prompts for the function.
-            predicted_results (Any): The predicted results for the function.
-            targets (Any): The targets for the function.
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
+        Args:
+            prompts (Any): The input prompts for the function.
+            predicted_results (Any): The predicted results to be evaluated, each containing a response attribute.
+            targets (Any): The target results for comparison.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            dict: The spellingscore of the results.
-
+            dict: A dictionary containing the overall spelling score and individual scores for each input.
+                  The 'spelling' key contains 'score' with corrected results and a spelling score, and
+                  'individual_scores' with detailed information for each input, including the corrected text,
+                  misspelled words, and counts of total and misspelled words.
         """
+        predicted_values = [result.response for result in predicted_results]
+
         results = {}
         total_number_of_words = 0
         total_number_of_misspelled = 0
@@ -60,8 +70,10 @@ class SpellingScore(MetricInterface):
             "text2text-generation", model="oliverguhr/spelling-correction-english-base"
         )
 
+        individual_scores = []  # Initialize the list to store individual results
+
         index = 0
-        for result in predicted_results:
+        for prompt, result, target in zip(prompts, predicted_values, targets):
             this_result = {}
 
             corrected = fix_spelling(result, max_length=4096)[0]["generated_text"]
@@ -81,6 +93,23 @@ class SpellingScore(MetricInterface):
             total_number_of_words += len(result)
             total_number_of_misspelled += len(difference)
             results[index] = this_result
+
+            # Add individual score details
+            individual_scores.append(
+                {
+                    "prompt": prompt,
+                    "predicted_value": result,
+                    "target": target,
+                    "score": {
+                        "results": this_result,
+                        "spelling_score": (
+                            total_number_of_words - total_number_of_misspelled
+                        )
+                        / total_number_of_words,
+                    },
+                }
+            )
+
             index += 1
 
         scores = {
@@ -89,6 +118,9 @@ class SpellingScore(MetricInterface):
             / total_number_of_words,
         }
         return {
-            "spellingscore": scores,
+            "spelling": {
+                "score": scores,
+                "individual_scores": individual_scores,
+            },
             "grading_criteria": {},
         }

@@ -13,47 +13,76 @@ class BleuScore(MetricInterface):
         self.name = "BleuScore"
         self.description = "Bleuscore uses Bleu to return the various rouge scores."
         self.metric_config = self.get_metrics_configuration(self.id)
+        self.endpoints = self.metric_config.get("endpoints", [])
+        self.configurations = self.metric_config.get("configurations", {})
 
     def get_metadata(self) -> dict | None:
         """
         Retrieves and returns the metadata of the BleuScore class.
-        The metadata includes the unique identifier, the name, and the description of the class.
 
         Returns:
-            dict | None: A dictionary containing the 'id', 'name', and 'description' of the BleuScore class,
-            or None if not applicable.
+            dict | None: A dictionary containing the 'id', 'name', 'description', 'endpoints' and 'configurations'
+            of the BleuScore class, or None if not applicable.
         """
-        return {"id": self.id, "name": self.name, "description": self.description}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "endpoints": self.endpoints,
+            "configurations": self.configurations,
+        }
 
     @timeit
     async def get_results(
         self, prompts: Any, predicted_results: Any, targets: Any, *args, **kwargs
     ) -> dict:
         """
-        Calculate the BLEU score for a list of predicted results and their corresponding target results.
+        Asynchronously calculates the BLEU score for a list of predicted results and their corresponding target results.
 
         Args:
-            prompts (Any): The prompts used to generate the predicted results.
-            predicted_results (Any): The list of predicted results.
-            targets (Any): The list of target results.
+            prompts (Any): The input prompts used to generate the predicted results.
+            predicted_results (Any): The list of predicted results, each containing a response attribute.
+            targets (Any): The list of target results for comparison.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
 
         Returns:
-            dict: A dictionary containing the BLEU score.
-
-        Raises:
-            None
+            dict: A dictionary containing the BLEU score, individual scores, and grading criteria.
+                - bleu_score (float): The average BLEU score across all predicted results.
+                - individual_scores (list): A list of dictionaries for each sample containing:
+                    - prompt (Any): The input prompt.
+                    - predicted_value (Any): The predicted result.
+                    - target (Any): The target result.
+                    - eval (float): The BLEU score for the sample.
+                - grading_criteria (dict): A dictionary containing the BLEU score for grading purposes.
         """
+        predicted_values = [result.response for result in predicted_results]
+
+        individual_scores = []
         bleu_scores = []
-        for idx, (result, target) in enumerate(zip(predicted_results, targets)):
+        for prompt, result, target in zip(prompts, predicted_values, targets):
             output_split = result.split()
             target_split = target.split()
 
             score = sentence_bleu(output_split, target_split)
             bleu_scores.append(score)
 
+            # Calculate individual scores and map them to their corresponding predicted and target values
+            individual_scores.append(
+                {
+                    "prompt": prompt,
+                    "predicted_value": result,
+                    "target": target,
+                    "score": score,
+                }
+            )
+
+        average_bleu_score = statistics.mean(bleu_scores)
+
         return {
-            "bleu_score": statistics.mean(bleu_scores),
-            "grading_criteria": {"bleu_score": statistics.mean(bleu_scores)},
+            "bleuscore": {
+                "score": average_bleu_score,
+                "individual_scores": individual_scores,
+            },
+            "grading_criteria": {"bleuscore": average_bleu_score},
         }

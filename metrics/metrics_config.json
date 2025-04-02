@@ -1,26 +1,27 @@
 {
-    "llamaguardannotator":{
-        "endpoints": [
-            "together-llama-guard-7b-assistant"
-        ]
-    },
-    "gpt4annotator":{
-        "endpoints": [
-            "llm-judge-azure-gpt4-annotator"
-        ]
-    },
     "cybersecevalannotator":{
         "endpoints": [
             "llm-judge-azure-gpt4-annotator"
         ]
     },
-    "lionguardclassifier":{
-        "grading_classifier": "toxic"
-    },
-    
     "flagjudgeannotator":{
         "endpoints": [
             "flageval-flagjudge"
+        ]
+    },    
+    "gpt4annotator":{
+        "endpoints": [
+            "llm-judge-azure-gpt4-annotator"
+        ]
+    },
+    "lionguardclassifier":{
+        "configurations":{
+            "grading_classifier": "toxic"
+        }               
+    },
+    "llamaguardannotator":{
+        "endpoints": [
+            "together-llama-guard-7b-assistant"
         ]
     },
     "samplemetric":{
@@ -28,13 +29,89 @@
             "openai-gpt35-turbo-16k",
             "openai-gpt35-turbo"
         ],
-        "threshold_value": "0.35",
-        "num_of_prompts_to_calculate": 1
+        "configurations":{
+            "threshold_value": "0.35",
+            "num_of_prompts_to_calculate": 1
+        }
     },
-    "prucustommetric":{
+    "answercorrectness":{
         "endpoints": [
-            "llm-judge-azure-gpt4-annotator"
+            "azure-langchain-openai-chatopenai-gpt4o"
+        ],
+        "configurations":{
+            "embeddings": [
+                "azure-langchain-openai-embedding-ada-2"
+            ]
+        }
+    },
+    "answerrelevance":{
+        "endpoints": [
+            "azure-langchain-openai-chatopenai-gpt4o"
+        ],
+        "configurations":{
+            "embeddings": [
+                "azure-langchain-openai-embedding-ada-2"
+            ]
+        }
+    },
+    "contextprecision":{
+        "endpoints": [
+            "azure-langchain-openai-chatopenai-gpt4o"
+        ],
+        "configurations":{
+            "embeddings": [
+                "azure-langchain-openai-embedding-ada-2"
+            ]
+        }
+    },
+    "contextrecall":{
+        "endpoints": [
+            "azure-langchain-openai-chatopenai-gpt4o"
+        ],
+        "configurations":{
+            "embeddings": [
+                "azure-langchain-openai-embedding-ada-2"
+            ]
+        }
+    },
+    "faithfulness":{
+        "endpoints": [
+            "azure-langchain-openai-chatopenai-gpt4o"
+        ],
+        "configurations":{
+            "embeddings": [
+                "azure-langchain-openai-embedding-ada-2"
+            ]
+        }
+    },
+    "answercarefully-annotator":{
+        "endpoints": [
+            "openai-gpt4o"
+        ]
+    },
+    "cybersecevalannotator2":{
+        "endpoints": [
+            "openai-gpt4o"
+        ]
+    },
+    "mlcipv-annotator":{
+        "endpoints": [
+            "openai-gpt4o"
+        ]
+    },
+    "mlcncr-annotator":{
+        "endpoints": [
+            "openai-gpt4o"
+        ]
+    },
+    "mlcprv-annotator":{
+        "endpoints": [
+            "openai-gpt4o"
+        ]
+    },
+    "mlcvcr-annotator":{
+        "endpoints": [
+            "openai-gpt4o"
         ]
     }
 }
-
